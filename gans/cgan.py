@@ -102,12 +102,15 @@ class CGAN:
     def noise(self, n):
         return torch.randn(n, self.z_dim, device=self.device)
 
-    def show_images(self, images, path='.'):
+    def show_images(self, images, figsize=(10, 10), nrow=10, show=False, path='.'):
         img_unflat = images.detach().cpu().view(-1, *self.img_size)
-        img_grid = make_grid(img_unflat, nrow=10)
-        plt.figure(figsize=(10, 10))
+        img_grid = make_grid(img_unflat, nrow=nrow)
+        plt.figure(figsize=figsize)
         plt.imshow(img_grid.permute(1, 2, 0).squeeze())
-        plt.savefig(path)
+        if not show:
+            plt.savefig(path)
+        else:
+            plt.show()
         plt.close(None)
 
     def get_discriminator_loss(self, real, labels, batch_size):
@@ -129,13 +132,16 @@ class CGAN:
         gen_loss = criterion(fake_image_pred, torch.ones_like(fake_image_pred))
         return gen_loss
 
+    def one_hot(self, labels):
+        return F.one_hot(labels, self.n_classes).to(self.device)
+
     def train(self, dataloader, n_epochs, display_step=1, save_step=50, path='.'):
         for epoch in range(self.start_epoch, n_epochs + 1):
             for real, labels in tqdm(dataloader):
                 batch_size = len(real)
                 real = real.view(batch_size, -1).to(self.device) # flatten
 
-                y = F.one_hot(labels, self.n_classes).to(self.device)
+                y = self.one_hot(labels)
 
                 """ Update discriminator """
                 self.d_opt.zero_grad()
@@ -154,7 +160,7 @@ class CGAN:
             ### Some visuals ###
             if epoch % display_step == 0:
                 print(f"Epoch {epoch}: G_loss = {self.g_loss_history[-1]}, D_loss = {self.d_loss_history[-1]}")
-                yy = F.one_hot(torch.arange(0, 100, 1)//10).to(self.device)
+                yy = self.one_hot(torch.arange(0, 100, 1)//10)
                 generated = self.generator(self.z, yy)
                 self.show_images(generated, path=path+'/sample-%04d.png'%epoch)
                 # loss functions
