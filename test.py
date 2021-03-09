@@ -32,7 +32,7 @@ def test_new_data():
 
     x = g.generator(z, y)
 
-    g.show_images(x, nrow=20, show=True)
+    g.show_images(x, nrow=20, figsize=(20, 10), show=True)
 
 def test_latent_perturbing():
     pass
