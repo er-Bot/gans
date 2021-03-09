@@ -1,4 +1,4 @@
-from gans import CGAN, load_mnist
+from gans import GAN, load_mnist
 import torch
 
 def test_train_ground():
@@ -24,15 +24,14 @@ def test_train_load():
     g.train(dataloader, n_epochs, path='./save/cgan')
 
 def test_new_data():
-    g = CGAN()
-    g.load_state('./save/cgan/cgan-1000.h5')
+    g = GAN()
+    g.load_state('./save/gan/gan-1000.h5')
     
     z = g.noise(200)
-    y = g.one_hot(torch.arange(0, 200, 1)//20)
+    
+    x = g.generator(z)
 
-    x = g.generator(z, y)
-
-    g.show_images(x, nrow=20, figsize=(20, 10), show=True)
+    g.show_images(x, nrow=20, figsize=(20, 10), path='img/gan.png')
 
 def test_latent_perturbing():
     pass

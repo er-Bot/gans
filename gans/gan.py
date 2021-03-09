@@ -95,12 +95,15 @@ class GAN:
     def noise(self, n):
         return torch.randn(n, self.z_dim, device=self.device)
 
-    def show_images(self, images, path='.'):
+    def show_images(self, images, figsize=(10, 10), nrow=10, show=False, path='.'):
         img_unflat = images.detach().cpu().view(-1, *self.img_size)
-        img_grid = make_grid(img_unflat, nrow=10)
-        plt.figure(figsize=(10, 10))
+        img_grid = make_grid(img_unflat, nrow=nrow)
+        plt.figure(figsize=figsize)
         plt.imshow(img_grid.permute(1, 2, 0).squeeze())
-        plt.savefig(path)
+        if not show:
+            plt.savefig(path)
+        else:
+            plt.show()
         plt.close(None)
 
     def get_discriminator_loss(self, real, batch_size):
