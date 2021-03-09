@@ -9,6 +9,6 @@ A list of different gan architectures.
 ![](img/gan.png)
 
 
-- [CGAN]()https://arxiv.org/abs/1411.1784 : 
+- [CGAN](https://arxiv.org/abs/1411.1784) : 
 ![](img/eq-cgan.png)
 ![](img/cgan.png)
